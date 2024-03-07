@@ -1,0 +1,34 @@
+#include <LiquidCrystal.h>
+
+// Initialize the LCD library with the numbers of the interface pins
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+// Button pin
+const int buttonPin = 8;
+int buttonState = 0;
+
+void setup() {
+ // Set up the LCD's number of columns and rows:
+ lcd.begin(16, 2);
+ // Set up the button pin as input
+ pinMode(buttonPin, INPUT);
+ // Initialize serial communication
+ Serial.begin(9600);
+}
+
+void loop() {
+ // Check if there's data from Python
+ if (Serial.available()) {
+    String ai_move = Serial.readStringUntil('\n');
+    // Display the AI's move on the LCD
+    lcd.setCursor(0, 0);
+    lcd.print("AI move: " + ai_move);
+    // Wait for the player's move
+    while (digitalRead(buttonPin) == LOW) {
+        delay(100); // Debounce delay
+    }
+    // Send the player's move back to Python
+    int player_move = 1; // Example: player moves to column 1
+    Serial.println(player_move);
+ }
+}
